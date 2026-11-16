@@ -1,0 +1,58 @@
+name: Evening rounds
+
+# Alfred rewrites his profile README from the household data that
+# iiSmitty/my-website publishes. The README carries the day of service and
+# the time of inspection, so every run commits. That keeps GitHub from
+# pausing the schedule after 60 quiet days, and fills his contribution graph.
+on:
+  schedule:
+    - cron: '0 17 * * *'   # 19:00 SAST, after the day's coffee runs (the last is 18:00 SAST)
+  workflow_dispatch:         # Manual trigger
+  # When the renderer changes, redo the README straight away. Can't loop: the
+  # workflow's own commits only touch README.md, and pushes made with
+  # GITHUB_TOKEN don't trigger workflows.
+  push:
+    branches: [main]
+    paths:
+      - render.js
+      - .github/workflows/inspect.yml
+
+# One run at a time, so two runs can't race to push the README
+concurrency:
+  group: inspect
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+
+      # No dependencies: the tests and the renderer only use Node built-ins
+      - name: Test
+        run: node --test
+
+      # render.js retries each fetch and writes nothing if any of them fail
+      - name: Rewrite the README and commit
+        run: |
+          MSG=$(node render.js)
+          git config --local user.email "292474565+waynemanor-butler@users.noreply.github.com"
+          git config --local user.name "Alfred Pennyworth"
+          git add README.md
+          if git diff --cached --quiet; then
+            echo "Nothing changed"
+            exit 0
+          fi
+          git commit -m "$MSG"
+          git pull --rebase origin main
+          git push
