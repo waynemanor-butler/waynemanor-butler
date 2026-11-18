@@ -30,16 +30,28 @@ const OWNER = 'https://github.com/iiSmitty';
 const LEDGER = 'https://github.com/iiSmitty/my-website/commits?author=waynemanor-butler';
 const SPONSORS = 'https://github.com/sponsors/iiSmitty';
 
-// One a day, in turn, prefixed with the day of service
-const ROUNDS = [
-    'Evening rounds complete.',
-    'Ledger checked, silver counted.',
-    'Rounds done. Nothing amiss.',
-    'Inspected and initialled.',
-    'Doors locked, ledger balanced.',
-    'The house is in order, sir.',
-    'Evening inspection. Carry on, sir.',
-];
+// He does two rounds a day. Each round has its own lines, one a day in turn,
+// prefixed with the day of service.
+const ROUNDS = {
+    morning: [
+        'Morning rounds. All present.',
+        'Curtains drawn, ledger opened.',
+        'Post sorted, ledger read.',
+        'Morning. The house is as you left it.',
+        'Silver polished before breakfast.',
+        'First rounds of the day. Nothing to report.',
+        'Morning inspection. Tea is on, sir.',
+    ],
+    evening: [
+        'Evening rounds complete.',
+        'Ledger checked, silver counted.',
+        'Rounds done. Nothing amiss.',
+        'Inspected and initialled.',
+        'Doors locked, ledger balanced.',
+        'The house is in order, sir.',
+        'Evening inspection. Carry on, sir.',
+    ],
+};
 
 // --- formatting ---
 
@@ -170,7 +182,7 @@ function renderReadme({ coffee = {}, watching = {}, sponsors = {} }, now) {
     ].filter(([, entry]) => entry);
 
     return [
-        '<!-- Rewritten every evening by .github/workflows/inspect.yml from the data in iiSmitty/my-website. Hand edits will not survive the night. -->',
+        '<!-- Rewritten every morning and evening by .github/workflows/inspect.yml from the data in iiSmitty/my-website. Hand edits will not last the day. -->',
         '',
         `Butler to [Master Wayne](${OWNER}). I keep the household ledger for [andresmit.co.za](${SITE}); my entries are in [the commit history](${LEDGER}).`,
         '',
@@ -187,9 +199,11 @@ function renderReadme({ coffee = {}, watching = {}, sponsors = {} }, now) {
     ].join('\n');
 }
 
-function commitMessage(now) {
+/** round is 'morning' or 'evening'; anything else is treated as evening */
+function commitMessage(now, round = 'evening') {
     const day = dayOfService(now);
-    return `Day ${day}. ${ROUNDS[((day % ROUNDS.length) + ROUNDS.length) % ROUNDS.length]}`;
+    const lines = ROUNDS[round] || ROUNDS.evening;
+    return `Day ${day}. ${lines[((day % lines.length) + lines.length) % lines.length]}`;
 }
 
 // --- fetching ---
@@ -215,7 +229,7 @@ async function main() {
     );
     const now = new Date();
     fs.writeFileSync(README_PATH, renderReadme({ coffee, watching, sponsors }, now));
-    process.stdout.write(commitMessage(now));
+    process.stdout.write(commitMessage(now, process.env.ROUND));
 }
 
 if (require.main === module) {

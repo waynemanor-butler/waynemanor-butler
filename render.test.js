@@ -90,3 +90,11 @@ test('the commit message changes daily and names the day', () => {
     assert.match(tomorrow, /^Day 161\. \S/);
     assert.notEqual(today.slice(8), tomorrow.slice(8));
 });
+
+test('the morning round has its own lines, and evening is the default', () => {
+    const morning = commitMessage(evening, 'morning');
+    assert.match(morning, /^Day 160\. \S/);
+    assert.notEqual(morning, commitMessage(evening, 'evening'));
+    assert.equal(commitMessage(evening), commitMessage(evening, 'evening'));
+    assert.equal(commitMessage(evening, undefined), commitMessage(evening, 'evening'));
+});

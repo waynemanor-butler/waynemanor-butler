@@ -1,12 +1,19 @@
-name: Evening rounds
+name: Rounds
 
 # Alfred rewrites his profile README from the household data that
 # iiSmitty/my-website publishes. The README carries the day of service and
 # the time of inspection, so every run commits. That keeps GitHub from
 # pausing the schedule after 60 quiet days, and fills his contribution graph.
+#
+# He does two rounds a day. GitHub can start a scheduled run hours late (the
+# evening run has started as late as 00:38 UTC), and the graph files a commit
+# under its UTC date, so a late evening run alone can leave a day blank. The
+# morning run lands well before midnight UTC even when it is late, so every
+# day gets at least one commit. The evening run picks up the day's coffee.
 on:
   schedule:
-    - cron: '0 17 * * *'   # 19:00 SAST, after the day's coffee runs (the last is 18:00 SAST)
+    - cron: '23 5 * * *'   # morning: 07:23 SAST, off the hour, when runs start more reliably
+    - cron: '0 17 * * *'   # evening: 19:00 SAST, after the day's coffee runs (the last is 18:00 SAST)
   workflow_dispatch:         # Manual trigger
   # When the renderer changes, redo the README straight away. Can't loop: the
   # workflow's own commits only touch README.md, and pushes made with
@@ -44,6 +51,9 @@ jobs:
 
       # render.js retries each fetch and writes nothing if any of them fail
       - name: Rewrite the README and commit
+        env:
+          # Picks the commit message lines. Manual and push runs count as evening.
+          ROUND: ${{ github.event.schedule == '23 5 * * *' && 'morning' || 'evening' }}
         run: |
           MSG=$(node render.js)
           git config --local user.email "292474565+waynemanor-butler@users.noreply.github.com"
