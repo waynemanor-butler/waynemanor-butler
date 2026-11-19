@@ -15,4 +15,4 @@ In service since 10 June 2026. Today is day 163.
 | 🎬 Last film | Addams Family Values (1993), 30 September 2026 |
 | 🤝 Patrons | [1 patron](https://github.com/sponsors/iiSmitty), 2 coffees stood in all. |
 
-<sub>Last inspected 19 November 2026 at 01:15 SAST. All in order.</sub>
+<sub>Last inspected 19 November 2026 at 16:30 SAST. All in order.</sub>
