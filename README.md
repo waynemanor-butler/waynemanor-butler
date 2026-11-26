@@ -10,9 +10,9 @@ In service since 10 June 2026. Today is day 170.
 | --- | --- |
 | ☕ Coffee | 161 visits. Card at 0 of 10. 1 free cup in reserve, 31 redeemed. |
 | ☕ Last visit | 14 November 2026 |
-| 📼 Now watching | House, S3E16 (62 of 177) |
+| 📼 Now watching | House, S3E17 (63 of 177) |
 | 📼 Last finished | The Celebrity Traitors, 19 episodes. Finished 24 November 2026. |
 | 🎬 Last film | Addams Family Values (1993), 30 September 2026 |
 | 🤝 Patrons | [1 patron](https://github.com/sponsors/iiSmitty), 2 coffees stood in all. |
 
-<sub>Last inspected 26 November 2026 at 02:49 SAST. All in order.</sub>
+<sub>Last inspected 26 November 2026 at 17:27 SAST. All in order.</sub>
